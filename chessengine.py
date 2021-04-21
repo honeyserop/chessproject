@@ -40,7 +40,22 @@ class game_state:
                 self.blackkinglocation = (Movement.endrow, Movement.endcolumn)
 
     def get_checks(self):  # checks using get_possible_moves a valid to do with king in #
-        return self.get_possible_moves()
+        moves = self.get_possible_moves()
+        for i in range(len(moves) - 1, -1, -1):
+            self.makemove(moves(i))
+        return moves
+    def in_check(self):
+        if self.white_to_move:
+            return self.square_attacked(self.whitekinglocation[0], self.whitekinglocation[1])
+        if not self.white_to_move:
+            return self.square_attacked(self.blackkinglocation[0], self.blackkinglocation[1])
+
+    def square_attacked(self, r, c):
+        self.white_to_move = not self.white_to_move
+        oppmoves = self.get_possible_moves()
+        for move in oppmoves:
+            if move.endrow == r and move.endcolumn == c:
+                pass
 
     def get_possible_moves(self):  # checks for all possible player moves #
         allmoves = []
@@ -132,7 +147,6 @@ class game_state:
         if r - 1 >= 0 and c - 1 >= 0:
             if self.board[r - 1][c - 1] == '--' or self.board[r - 1][c - 1][0] == ('b' if self.white_to_move else 'w'):
                 allmoves.append(Movement((r, c), (r - 1, c - 1), self.board))
-
 
     def getknightmoves(self, r, c, allmoves):
         l = 1
